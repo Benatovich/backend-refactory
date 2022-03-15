@@ -4,18 +4,6 @@ const request = require('supertest');
 const app = require('../lib/app');
 const Order = require('../lib/models/Order');
 
-// TODO: Remove this function & use the Order model
-async function getOrderById(id) {
-  const { rows } = await pool.query(
-    'SELECT * FROM orders WHERE id=$1;',
-    [id]
-  );
-
-  if (!rows[0]) return null;
-
-  return new Order(rows[0]);
-}
-
 describe('refactory routes', () => {
   beforeEach(() => {
     return setup(pool);
@@ -75,10 +63,10 @@ describe('refactory routes', () => {
   });
 
   it('should be able to delete an order', async () => {
-    const order = await createOrder({ product: 'Widget', quantity: 1 });
+    const order = await Order.insert({ product: 'Widget', quantity: 1 });
     const res = await request(app).delete(`/api/v1/orders/${order.id}`);
 
     expect(res.body).toEqual(order);
-    expect(await getOrderById(order.id)).toBeNull();
+    expect(await Order.getById(order.id)).toBeNull();
   });
 });
