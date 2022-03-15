@@ -1,11 +1,12 @@
 const fs = require('fs').promises;
 
-module.exports = (pool) => {
-  return fs
-    .readFile(`${__dirname}/../sql/setup.sql`, { encoding: 'utf-8' })
-    .then((sql) => pool.query(sql))
-    .then(() => console.log('✅ Database setup complete!'))
-    .catch((error) =>
-      console.error('❌  Error setting up database:', error.message)
-    );
+module.exports = async (pool) => {
+  try {
+    const sql = await fs
+      .readFile(`${__dirname}/../sql/setup.sql`, { encoding: 'utf-8' });
+    pool.query(sql);
+    return console.log('✅ Database setup complete!');
+  } catch (error) {
+    return console.error('❌  Error setting up database:', error.message);
+  }
 };
