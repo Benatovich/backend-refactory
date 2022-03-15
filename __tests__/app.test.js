@@ -37,24 +37,27 @@ describe('refactory routes', () => {
     });
   });
 
+  it('should be able to list orders', async () => {
+    // const expected = [
+    //   { id: 1, product: 'Widget', quantity: 1 },
+    // ]
+    const orders = await Order.getAll()
+    const res = await request(app).get('/api/v1/orders');
+
+    expect(res.body).toEqual(orders);
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      product: 'widget',
+      quantity: 1,
+    });
+  });
+
   it('should be able to list an order by id', async () => {
     const order = await createOrder({ product: 'Widget', quantity: 1 });
     const res = await request(app).get(`/api/v1/orders/${order.id}`);
 
     expect(res.body).toEqual(order);
-  });
-
-  it('should be able to list orders', async () => {
-    await createOrder({ product: 'Widget', quantity: 1 });
-    const res = await request(app).get('/api/v1/orders');
-
-    expect(res.body).toEqual([
-      {
-        id: expect.any(String),
-        product: 'Widget',
-        quantity: 1,
-      },
-    ]);
   });
 
   it('should be able to update an order', async () => {
